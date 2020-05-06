@@ -5,11 +5,13 @@ import produce from 'immer';
 const NUM_ROWS = 50;
 const NUM_COLS = 50;
 
+type Grid = boolean[][];
+
 const App: React.FC = () => {
-  const [grid, setGrid] = useState(() => {
+  const [grid, setGrid]: [Grid, (grid: Grid) => void] = useState(() => {
     const rows = [];
     for (let i = 0; i < NUM_ROWS; i++) {
-      rows.push(Array.from(Array(NUM_COLS), () => 0));
+      rows.push(Array.from(Array(NUM_COLS), () => false));
     }
     return rows;
   });
@@ -33,7 +35,7 @@ const App: React.FC = () => {
             }}
             onClick={() => {
               const newGrid = produce(grid, (gridCopy) => {
-                gridCopy[rowIndex][colIndex] = 1;
+                gridCopy[rowIndex][colIndex] = !gridCopy[rowIndex][colIndex];
               });
               setGrid(newGrid);
             }}
