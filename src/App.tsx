@@ -1,26 +1,40 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
 
-function App() {
+const NUM_ROWS = 50;
+const NUM_COLS = 50;
+
+const App: React.FC = () => {
+  const [grid, setGrid] = useState(() => {
+    const rows = [];
+    for (let i = 0; i < NUM_ROWS; i++) {
+      rows.push(Array.from(Array(NUM_COLS), () => 0));
+    }
+    return rows;
+  });
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: `repeat(${NUM_COLS}, 20px)`,
+      }}
+    >
+      {grid.map((rows, rowIndex) =>
+        rows.map((col, colIndex) => (
+          <div
+            key={`box-${rowIndex}-${colIndex}`}
+            style={{
+              width: 20,
+              height: 20,
+              backgroundColor: grid[rowIndex][colIndex] ? 'pink' : undefined,
+              border: '1px solid black',
+            }}
+          ></div>
+        ))
+      )}
     </div>
   );
-}
+};
 
 export default App;
