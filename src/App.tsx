@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
+import produce from 'immer';
 
 const NUM_ROWS = 50;
 const NUM_COLS = 50;
@@ -29,6 +30,12 @@ const App: React.FC = () => {
               height: 20,
               backgroundColor: grid[rowIndex][colIndex] ? 'pink' : undefined,
               border: '1px solid black',
+            }}
+            onClick={() => {
+              const newGrid = produce(grid, (gridCopy) => {
+                gridCopy[rowIndex][colIndex] = 1;
+              });
+              setGrid(newGrid);
             }}
           ></div>
         ))
