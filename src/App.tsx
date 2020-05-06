@@ -32,8 +32,22 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <>
+    <div
+      style={{
+        width: '100vw',
+        height: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyItems: 'center',
+      }}
+    >
       <button
+        style={{
+          height: '50px',
+          padding: '10px',
+          width: '100px',
+        }}
         onClick={() => {
           setRunning(!running);
           if (!running) {
@@ -42,7 +56,7 @@ const App: React.FC = () => {
           }
         }}
       >
-        {running ? 'stop' : 'start'}
+        {running ? 'STOP' : 'START'}
       </button>
 
       <div
@@ -59,7 +73,7 @@ const App: React.FC = () => {
                 width: 20,
                 height: 20,
                 backgroundColor: col ? 'pink' : undefined,
-                border: '1px solid black',
+                border: '1px solid #24292e',
               }}
               onClick={() => {
                 const newGrid = produce(grid, (gridCopy) => {
@@ -71,7 +85,7 @@ const App: React.FC = () => {
           ))
         )}
       </div>
-    </>
+    </div>
   );
 };
 
