@@ -1,22 +1,9 @@
 import React, { useState, useCallback, useRef } from 'react';
-
 import produce from 'immer';
 
-const NUM_ROWS = 50;
-const NUM_COLS = 50;
-
-const OPERATIONS = [
-  [0, 1],
-  [0, -1],
-  [1, -1],
-  [-1, 1],
-  [1, 1],
-  [-1, -1],
-  [1, 0],
-  [-1, 0],
-];
-
-type Grid = number[][];
+import { Grid } from './type';
+import { NUM_ROWS, NUM_COLS } from './constants';
+import { createNewGrid } from './gameOfLifeLogic';
 
 const App: React.FC = () => {
   const [grid, setGrid]: [Grid, (grid: Grid) => void] = useState(() => {
@@ -32,36 +19,13 @@ const App: React.FC = () => {
   const runningRef = useRef(running);
   runningRef.current = running;
 
-  const isNeighborWithinBound = (row: number, col: number): boolean =>
-    row >= 0 && row < NUM_ROWS && col >= 0 && col < NUM_COLS;
-
   const runSimulation = useCallback(() => {
     if (!runningRef.current) {
       return;
     }
     // @ts-ignore
     setGrid((currGrid) => {
-      return produce(currGrid, (gridCopy: Grid) => {
-        for (let row = 0; row < NUM_ROWS; row++) {
-          for (let col = 0; col < NUM_COLS; col++) {
-            let neighbors = 0;
-            OPERATIONS.forEach(([x, y]) => {
-              const newRow = row + x;
-              const newCol = col + y;
-
-              if (isNeighborWithinBound(newRow, newCol)) {
-                neighbors += currGrid[newRow][newCol];
-              }
-            });
-
-            if (neighbors < 2 || neighbors > 3) {
-              gridCopy[row][col] = 0;
-            } else if (currGrid[row][col] === 0 && neighbors === 3) {
-              gridCopy[row][col] = 1;
-            }
-          }
-        }
-      });
+      return createNewGrid(currGrid);
     });
 
     setTimeout(runSimulation, 500);
