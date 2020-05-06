@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef } from 'react';
-import './App.css';
+
 import produce from 'immer';
 
 const NUM_ROWS = 50;
