@@ -2,8 +2,8 @@ import React, { useState, useCallback, useRef } from 'react';
 import './App.css';
 import produce from 'immer';
 
-const NUM_ROWS = 5;
-const NUM_COLS = 5;
+const NUM_ROWS = 50;
+const NUM_COLS = 50;
 
 const OPERATIONS = [
   [0, 1],
@@ -35,53 +35,47 @@ const App: React.FC = () => {
   const isNeighborWithinBound = (row: number, col: number): boolean =>
     row >= 0 && row < NUM_ROWS && col >= 0 && col < NUM_COLS;
 
-  const runSimulation = () => {
+  const runSimulation = useCallback(() => {
     if (!runningRef.current) {
       return;
     }
+    // @ts-ignore
+    setGrid((currGrid) => {
+      return produce(currGrid, (gridCopy: Grid) => {
+        for (let row = 0; row < NUM_ROWS; row++) {
+          for (let col = 0; col < NUM_COLS; col++) {
+            let neighbors = 0;
+            OPERATIONS.forEach(([x, y]) => {
+              const newRow = row + x;
+              const newCol = col + y;
 
-    console.log('old grid');
-    console.log(grid);
+              if (isNeighborWithinBound(newRow, newCol)) {
+                neighbors += currGrid[newRow][newCol];
+              }
+            });
 
-    const newGrid = produce(grid, (gridCopy: Grid) => {
-      for (let row = 0; row < NUM_ROWS; row++) {
-        for (let col = 0; col < NUM_COLS; col++) {
-          let neighbors = 0;
-          OPERATIONS.forEach(([x, y]) => {
-            const newRow = row + x;
-            const newCol = col + y;
-
-            if (isNeighborWithinBound(newRow, newCol)) {
-              neighbors += grid[newRow][newCol];
+            if (neighbors < 2 || neighbors > 3) {
+              gridCopy[row][col] = 0;
+            } else if (currGrid[row][col] === 0 && neighbors === 3) {
+              gridCopy[row][col] = 1;
             }
-          });
-
-          if (neighbors < 2 || neighbors > 3) {
-            gridCopy[row][col] = 0;
-          } else if (grid[row][col] === 0 && neighbors === 3) {
-            console.log('ALIVE in ', row, col);
-            gridCopy[row][col] = 1;
           }
         }
-      }
+      });
     });
 
-    console.log('updated grid');
-    console.log(newGrid);
-    setGrid(newGrid);
-    console.log('after save grid');
-    console.log(grid);
-
-    setTimeout(runSimulation, 1000);
-  };
+    setTimeout(runSimulation, 500);
+  }, []);
 
   return (
     <>
       <button
         onClick={() => {
           setRunning(!running);
-          runningRef.current = true;
-          runSimulation();
+          if (!running) {
+            runningRef.current = true;
+            runSimulation();
+          }
         }}
       >
         {running ? 'stop' : 'start'}
@@ -108,8 +102,6 @@ const App: React.FC = () => {
                   gridCopy[rowIndex][colIndex] = col ? 0 : 1;
                 });
                 setGrid(newGrid);
-                console.log('update');
-                console.log(grid);
               }}
             ></div>
           ))
